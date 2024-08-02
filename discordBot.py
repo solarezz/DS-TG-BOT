@@ -10,7 +10,6 @@ token = 'MTI2OTIxNTk1Mjc0MzA0MzA3Mg.GkS8Gp.f4tqsFp6kelm8YVSFNmfQnrj4_1nvSU4Yfshq
 
 intents = disnake.Intents.default().all()
 
-
 db = Database()
 
 ID_CHANNEL = 1269214873045307516
