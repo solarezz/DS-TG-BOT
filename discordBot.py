@@ -9,9 +9,7 @@ from aiogram import Bot, Dispatcher, types
 token = 'MTI2OTIxNTk1Mjc0MzA0MzA3Mg.GkS8Gp.f4tqsFp6kelm8YVSFNmfQnrj4_1nvSU4Yfshq4'
 
 intents = disnake.Intents.default().all()
-intents.messages = True
-intents.guilds = True
-intents.message_content = True
+
 
 db = Database()
 
