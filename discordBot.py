@@ -88,9 +88,9 @@ async def dev(interaction: disnake.ApplicationCommandInteraction):
     global can_check_dev
     if can_check_dev:
         embed = disnake.Embed(title="[👨🏻‍💻] Разработчик бота:", color=0x185200)
-        embed.add_field(name="Кодер", value="@solarezzwhynot")
-        embed.add_field(name="Версия", value="0.2")
-        embed.add_field(name="Поддержка копеечкой для хостинга", value="2200700716994750")
+        embed.add_field(name="[🛠] Кодер", value="@solarezzwhynot")
+        embed.add_field(name="[⚙️] Версия", value="0.2")
+        embed.add_field(name="[💳] Поддержка копеечкой для хостинга", value="2200 7007 1699 4750")
         await interaction.send(embed=embed)
         can_check_dev = False
 
