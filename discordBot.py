@@ -5,21 +5,20 @@ from disnake.ext import commands
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from database import Database
 from aiogram import Bot, Dispatcher, types
+from ds_token import ds_token
+from tg_token import tg_token
 
-token = 'MTI2OTIxNTk1Mjc0MzA0MzA3Mg.GkS8Gp.f4tqsFp6kelm8YVSFNmfQnrj4_1nvSU4Yfshq4'
+token = ds_token
 
 intents = disnake.Intents.default().all()
-intents.messages = True
-intents.guilds = True
-intents.message_content = True
 
 db = Database()
 
-ID_CHANNEL = 1269214873045307516
+ID_CHANNEL = 875772759806984234
 
 logging.basicConfig(level=logging.INFO)
 
-API_TOKEN = '7498090524:AAHp2tQbpRDtUEJEVeqxaMSpwJLr9A4EzsQ'
+API_TOKEN = tg_token
 
 bottg = Bot(token=API_TOKEN)
 dp = Dispatcher(bottg, storage=MemoryStorage())
@@ -29,20 +28,28 @@ bot = commands.Bot(command_prefix='/', intents=intents)
 
 @dp.message_handler(commands=['start'])
 async def start(message: types.Message):
-    await bottg.send_message(message.chat.id, "Вы успешно внесли свои данные в бота!")
+    await bottg.send_message(message.chat.id, "[✔️] Вы успешно внесли свои данные в бота!")
     await db.add_user(user_id=message.chat.id, name=message.from_user.first_name)
 
 @dp.message_handler()
 async def message_in_discord(message: types.Message):
-    user_text = message.text
-    await on_ready(name=message.from_user.first_name, message=user_text)
+    global can_send_message
+    if can_send_message:
+        user_text = message.text
+        await on_ready(name=message.from_user.first_name, message=user_text)
+        can_send_message = False
 
+        await asyncio.sleep(15)
+
+        can_send_message = True
+    else:
+        await message.answer('[❌] Отправлять сообщения в дискорд можно раз в 15 секунд!')
 
 @bot.event
 async def on_ready(name, message):
     try:
-        embed = disnake.Embed(title=f"Сообщение из телеграмм от {name}", color=0x5da6e8)
-        embed.add_field(name='Содержание сообщение:', value=message)
+        embed = disnake.Embed(title=f"[📩] Сообщение из телеграмм от {name}", color=0x5da6e8)
+        embed.add_field(name='[📝] Содержание сообщение:', value=message)
         channel = bot.get_channel(ID_CHANNEL)
         await channel.send(embed=embed)
     except TypeError:
@@ -55,18 +62,43 @@ async def on_ready(name, message):
 async def info(interaction: disnake.ApplicationCommandInteraction):
     users = await db.info()
     user_list = '\n'.join([f'{user[0]} - {user[1]}' for user in users])
-    embed = disnake.Embed(title=f'Пользователи которым вы можете отправить сообщение:\n', color=0x00ff00)
-    embed.add_field(name='ID в Телеграмм - Имя в Телеграмм', value=user_list)
+    embed = disnake.Embed(title=f'[🌐] Пользователи которым вы можете отправить сообщение:\n', color=0x00ff00)
+    embed.add_field(name='[🆔] ID в Телеграмм - [🟣] Имя в Телеграмм', value=user_list)
     await interaction.send(embed=embed, ephemeral=True)
 
 
 @bot.slash_command(name='send_tg', description="Отправить сообщение в телеграмм")
 async def send_tg(interaction: disnake.ApplicationCommandInteraction, user_id, message: str):
-    user = interaction.user
-    user_info = await db.info_user(user_id)
-    await interaction.send(f"Вы отправили сообщение пользователю - {user_info[0]}!")
-    await bottg.send_message(user_id, f'[{message}] - от {user.name}')
+    global can_send_tg
+    if can_send_tg:
+        user = interaction.user
+        user_info = await db.info_user(user_id)
+        await interaction.send(f"[📨] Вы отправили сообщение пользователю - {user_info[0]}!")
+        await bottg.send_message(user_id, f'[{message}] - от {user.name}')
+        can_send_tg = False
 
+        await asyncio.sleep(15)
+
+        can_send_tg = True
+    else:
+        await interaction.send("[❌] Отправлять сообщения в телеграмм можно раз в 15 секунд!", ephemeral=True)
+
+@bot.slash_command(name="dev", description="Разработчик бота")
+async def dev(interaction: disnake.ApplicationCommandInteraction):
+    global can_check_dev
+    if can_check_dev:
+        embed = disnake.Embed(title="[👨🏻‍💻] Разработчик бота:", color=0x185200)
+        embed.add_field(name="[🛠] Кодер", value="@solarezzwhynot")
+        embed.add_field(name="[⚙️] Версия", value="0.2")
+        embed.add_field(name="[💳] Поддержка копеечкой для хостинга", value="2200 7007 1699 4750")
+        await interaction.send(embed=embed)
+        can_check_dev = False
+
+        await asyncio.sleep(15)
+
+        can_check_dev = True
+    else:
+        await interaction.send("[❌] Спамить нельзя!", ephemeral=True)
 
 async def main():
     # Start the Telegram bot
