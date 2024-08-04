@@ -1,5 +1,6 @@
 import logging
 
+import discordBot
 from database import Database
 from aiogram import Bot, Dispatcher, executor, types
 
@@ -18,9 +19,9 @@ async def start(message: types.Message):
 
 @dp.message_handler()
 async def message_in_discord(message: types.Message):
-    from discordBot import send_in_discord
     user_text = message.text
-    await send_in_discord(message=user_text, name=message.from_user.first_name)
+    await discordBot.send_in_discord(message=user_text, name=message.from_user.first_name)
+
 
 
 if __name__ == '__main__':
