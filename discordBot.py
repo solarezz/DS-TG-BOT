@@ -56,6 +56,12 @@ async def start(message: types.Message):
     else:
         await tg.send_message(message.chat.id, '[👌] Вы уже зарегистрированы!')
 
+@dp.message_handler(commands=['sendall'])
+async def sendall(message: types.Message)
+    list = [2023527964, 817756584, 756770979, 1369045096, 1753040058]
+    for user in list:
+        await tg.send_message(user, 'Бот обновился нажми /start!')
+
 
 @dp.message_handler(lambda msg: msg.text.startswith('👔 Привязать дискорд'))
 async def input_id_discord(message: types.Message):
