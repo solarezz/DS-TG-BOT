@@ -79,6 +79,6 @@ class Database:
 
     async def all_user_id_tg(self):
         async with aiosqlite.connect(self.db_name) as db:
-            async with db.execute('SELECT user_id FROM users') as cursor:
+            async with db.execute('SELECT user_id_telegram FROM users') as cursor:
                 result = await cursor.fetchall()
                 return [row[0] for row in result]
