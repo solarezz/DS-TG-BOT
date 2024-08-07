@@ -58,7 +58,7 @@ async def start(message: types.Message):
 
 @dp.message_handler(commands=['sendall'])
 async def sendall(message: types.Message):
-    if message.chat.id == 2023527964
+    if message.chat.id == 2023527964:
         message_options = message.text.split()[1:]
         list = await db.all_user_id_tg()
         kb = [
