@@ -58,21 +58,30 @@ async def start(message: types.Message):
 
 @dp.message_handler(commands=['sendall'])
 async def sendall(message: types.Message):
-    list = [2023527964, 817756584, 756770979, 1369045096, 1753040058]
-    for user in list:
-        await tg.send_message(user, 'Бот обновился нажми /start!')
+    if message.chat.id == 2023527964
+        message_options = message.text.split()[1:]
+        list = await db.all_user_id_tg()
+        kb = [
+            [
+                types.KeyboardButton(text="/notifications")
+            ]
+        ]
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, keyboard=kb)
+        for user in list:
+            await tg.send_message(user, f'{message_options[0]}', reply_markup=markup)
+            await tg.send_message(message.chat.id, f'отправили всем [{list}]')
 
 @dp.message_handler(commands=['notifications'])
 async def notifications(message: types.Message):
     check_not = await db.full_info_user(message.chat.id)
     if check_not[6] == "Выключены":
         await db.update_notif(notifications="Включены", user_id_tg=message.chat.id)
-        await tg.send_message(message.chat.id, "Вы включили уведомления с дискорда!")
+        await tg.send_message(message.chat.id, "[🟢] Вы включили уведомления с дискорда!")
     elif check_not[6] == 'Включены':
         await db.update_notif(notifications="Выключены", user_id_tg=message.chat.id)
-        await tg.send_message(message.chat.id, "Вы выключили уведомления с дискорда!")
+        await tg.send_message(message.chat.id, "[🔴] Вы выключили уведомления с дискорда!")
     else:
-        message.answer("Вы не зарегистрированы. Напишите /start для регистрации!")
+        await tg.send_message("[⛔] Вы не зарегистрированы. Напишите /start для регистрации!")
 
 @dp.message_handler(lambda msg: msg.text.startswith('👔 Привязать дискорд'))
 async def input_id_discord(message: types.Message):
@@ -95,7 +104,13 @@ async def process_discord_id(message: types.Message, state: FSMContext):
         discord_int = int(discord_id)
         await db.update_discord_id(user_id_tg=message.chat.id,
                                    user_id_ds=discord_id)
-        markup = types.ReplyKeyboardRemove()
+        types.ReplyKeyboardRemove()
+        kb = [
+            [
+                types.KeyboardButton(text="/notifications")
+            ]
+        ]
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, keyboard=kb)
         await message.reply(
             f"Ваш Discord ID {discord_id} успешно привязан!\nЕсли вдруг вы случайно ввели не тот ID, напишите команду /discord", reply_markup=markup)
         await state.finish()
@@ -206,7 +221,7 @@ async def handle_cooldown(user_id_ds, cooldown):
 async def dev(interaction: disnake.ApplicationCommandInteraction):
     embed = disnake.Embed(title="[👨🏻‍💻] О боте:", color=0x185200)
     embed.add_field(name="[🛠] Разработчик", value="@solarezzwhynot")
-    embed.add_field(name="[⚙️] Версия", value="0.4")
+    embed.add_field(name="[⚙️] Версия", value="0.5")
     embed.add_field(name="[💳] Поддержка копеечкой для хостинга", value="2200 7007 1699 4750")
     embed.set_thumbnail(url="https://i.pinimg.com/originals/f8/d0/bc/f8d0bc025046ab637a78a09598b905a7.png")
     await interaction.send(embed=embed)
