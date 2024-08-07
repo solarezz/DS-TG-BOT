@@ -57,11 +57,22 @@ async def start(message: types.Message):
         await tg.send_message(message.chat.id, '[👌] Вы уже зарегистрированы!')
 
 @dp.message_handler(commands=['sendall'])
-async def sendall(message: types.Message)
+async def sendall(message: types.Message):
     list = [2023527964, 817756584, 756770979, 1369045096, 1753040058]
     for user in list:
         await tg.send_message(user, 'Бот обновился нажми /start!')
 
+@dp.message_handler(commands=['notifications'])
+async def notifications(message: types.Message):
+    check_not = await db.full_info_user(message.chat.id)
+    if check_not[6] == "Выключены":
+        await db.update_notif(notifications="Включены", user_id_tg=message.chat.id)
+        await tg.send_message(message.chat.id, "Вы включили уведомления с дискорда!")
+    elif check_not[6] == 'Включены':
+        await db.update_notif(notifications="Выключены", user_id_tg=message.chat.id)
+        await tg.send_message(message.chat.id, "Вы выключили уведомления с дискорда!")
+    else:
+        message.answer("Вы не зарегистрированы. Напишите /start для регистрации!")
 
 @dp.message_handler(lambda msg: msg.text.startswith('👔 Привязать дискорд'))
 async def input_id_discord(message: types.Message):
@@ -121,6 +132,16 @@ async def on_ready(name, message):
     channel = ds.get_channel(ID_CHANNEL)
     await channel.send(embed=embed)
 
+
+@ds.event
+async def on_message(message):
+    if message.author == ds.user:
+        return
+
+    user_list = await db.info_id_not()
+
+    for userid in user_list:
+        await tg.send_message(userid, f'Получено сообщение от {message.author}: {message.content}')
 
 @ds.slash_command(name="myid", description='Информация о ID пользователя')
 async def myid(interaction: disnake.ApplicationCommandInteraction):

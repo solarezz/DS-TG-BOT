@@ -63,3 +63,16 @@ class Database:
             async with db.execute('SELECT user_id_telegram FROM users WHERE firstname = ?', (name,)) as cursor:
                 info_id = await cursor.fetchone()
                 return info_id[0]
+
+    async def update_notif(self, notifications, user_id_tg):
+        async with aiosqlite.connect(self.db_name) as db:
+            await db.execute('UPDATE users SET notifications = ? WHERE user_id_telegram = ?',
+                             (notifications,
+                             user_id_tg))
+            await db.commit()
+
+    async def info_id_not(self):
+        async with aiosqlite.connect(self.db_name) as db:
+            async with db.execute('SELECT user_id_telegram FROM users WHERE notifications = "Включены"') as cursor:
+                result = await cursor.fetchall()
+                return [row[0] for row in result]
