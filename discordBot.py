@@ -69,7 +69,8 @@ async def sendall(message: types.Message):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, keyboard=kb)
         for user in list:
             await tg.send_message(user, f'{message_options[0]}', reply_markup=markup)
-            await tg.send_message(message.chat.id, f'отправили всем [{list}]')
+
+        await tg.send_message(message.chat.id, f'отправили всем [{list}]')
 
 @dp.message_handler(commands=['notifications'])
 async def notifications(message: types.Message):
