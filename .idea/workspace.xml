@@ -11,7 +11,6 @@
       <change afterPath="$PROJECT_DIR$/../course/store-server/store/.idea/store.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../course/store-server/store/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/database.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/database.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/discordBot.py" beforeDir="false" afterPath="$PROJECT_DIR$/discordBot.py" afterDir="false" />
     </list>
@@ -142,7 +141,8 @@
       <workItem from="1723023247901" duration="4289000" />
       <workItem from="1723037816953" duration="12000" />
       <workItem from="1723120310896" duration="35000" />
-      <workItem from="1723196702719" duration="6723000" />
+      <workItem from="1723196702719" duration="6865000" />
+      <workItem from="1723207752913" duration="225000" />
     </task>
     <servers />
   </component>

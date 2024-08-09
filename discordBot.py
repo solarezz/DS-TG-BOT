@@ -68,7 +68,7 @@ async def sendall(message: types.Message):
             ]
         ]
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, keyboard=kb)
-        for user in list1:
+        for user in list:
             await tg.send_message(user, f'{text_to_send}', reply_markup=markup)
 
         await tg.send_message(message.chat.id, f'отправили всем [{list}]')
@@ -151,7 +151,7 @@ async def message_in_discord(message: types.Message):
         user_text = message.text
         counter = len(user_text.split())
         counter += counter_tg
-        await on_ready(name=message.from_user.first_name, message=user_text)
+        await on_ready(name=message.from_user.username, message=user_text)
         await db.update_counter_tg(counter_telegram=counter, user_id_telegram=message.chat.id)
         await db.update_cooldown_tg(cooldown_tg=cooldown, user_id_tg=message.chat.id)
         asyncio.create_task(handle_cooldown_tg(message.chat.id, cooldown))
