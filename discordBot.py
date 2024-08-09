@@ -59,7 +59,7 @@ async def start(message: types.Message):
 @dp.message_handler(commands=['sendall'])
 async def sendall(message: types.Message):
     if message.chat.id == 2023527964:
-        message_options = message.text.split()[1:]
+        message_options = message.text
         list = await db.all_user_id_tg()
         kb = [
             [
@@ -71,6 +71,8 @@ async def sendall(message: types.Message):
             await tg.send_message(user, f'{message_options[0]}', reply_markup=markup)
 
         await tg.send_message(message.chat.id, f'отправили всем [{list}]')
+    else:
+        pass
 
 @dp.message_handler(commands=['notifications'])
 async def notifications(message: types.Message):
@@ -142,7 +144,8 @@ async def handle_cooldown_tg(user_id, cooldown):
 
 @ds.event
 async def on_ready(name, message):
-    embed = disnake.Embed(title=f"[📩] Сообщение из телеграмм от {name}", color=disnake.Colour.blue())
+    URL = f'[{name}](https://t.me/{name})'
+    embed = disnake.Embed(title=f"[📩] Сообщение из телеграмм от: ", description=URL, color=disnake.Colour.blue())
     embed.add_field(name='[📝] Содержание сообщение:', value=message)
     embed.set_thumbnail(url="https://cdn2.iconfinder.com/data/icons/round-set-vol-2/120/sending-1024.png")
     channel = ds.get_channel(ID_CHANNEL)
@@ -157,7 +160,7 @@ async def on_message(message):
     user_list = await db.info_id_not()
 
     for userid in user_list:
-        await tg.send_message(userid, f'Получено сообщение от {message.author}: {message.content}')
+        await tg.send_message(userid, f'{message.author}:\n{message.content}')
 
 @ds.slash_command(name="myid", description='Информация о ID пользователя')
 async def myid(interaction: disnake.ApplicationCommandInteraction):
@@ -222,7 +225,7 @@ async def handle_cooldown(user_id_ds, cooldown):
 async def dev(interaction: disnake.ApplicationCommandInteraction):
     embed = disnake.Embed(title="[👨🏻‍💻] О боте:", color=0x185200)
     embed.add_field(name="[🛠] Разработчик", value="@solarezzwhynot")
-    embed.add_field(name="[⚙️] Версия", value="0.5")
+    embed.add_field(name="[⚙️] Версия", value="0.6")
     embed.add_field(name="[💳] Поддержка копеечкой для хостинга", value="2200 7007 1699 4750")
     embed.set_thumbnail(url="https://i.pinimg.com/originals/f8/d0/bc/f8d0bc025046ab637a78a09598b905a7.png")
     await interaction.send(embed=embed)
