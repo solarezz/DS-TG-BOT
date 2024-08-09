@@ -113,3 +113,11 @@ class Database:
                                   (user_id_discord,)) as cursor:
                 counter_ds = await cursor.fetchone()
                 return counter_ds[0]
+
+    async def full_info_user_discord(self, user_id_discord):
+        async with aiosqlite.connect(self.db_name) as db:
+            async with db.execute('SELECT * FROM users WHERE user_id_discord = ?',
+                                  (user_id_discord,)) as cursor:
+                info = await cursor.fetchone()
+                return info
+

@@ -249,6 +249,55 @@ async def handle_cooldown(user_id_ds, cooldown):
     user = ds.get_user(user_id_ds)
     await user.send("[✅] Вы вновь можете отправлять сообщения в телеграмм!")
 
+@ds.slash_command(name="profile", description="Профиль пользователя")
+async def profile(interaction: disnake.ApplicationCommandInteraction):
+    try:
+        counter_ds = await db.info_counter_ds(user_id_discord=interaction.author.id)
+        counter = await db.full_info_user_discord(user_id_discord=interaction.author.id)
+        embed = disnake.Embed(title="[👤] Ваш профиль:")
+        embed.add_field(name="[🩵] Количество сообщений из тг:", value=counter[7])
+        embed.add_field(name="[💙] Количество сообщений из дс:", value=counter_ds)
+        embed.add_field(name="[🩵💙] Общее кол-во сообщений:", value=counter[9])
+        await interaction.send(embed=embed, components=[
+            disnake.ui.Button(label="Информация", style=disnake.ButtonStyle.success, custom_id="info"),
+            disnake.ui.Button(label="Разработчик", style=disnake.ButtonStyle.danger, custom_id="dev"),
+        ],)
+    except:
+        kb = [
+            [
+                types.KeyboardButton(text="👔 Привязать дискорд")
+            ]
+        ]
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, keyboard=kb)
+        await interaction.send("[❌] Вы не привязали Discord ID к Telegram боту!", ephemeral=True)
+        await tg.send_message(counter[0], "[❌] Вы не привязали Discord ID к Telegram боту!",
+                              reply_markup=markup)
+
+@ds.listen("on_button_click")
+async def help_listener(interaction: disnake.MessageInteraction):
+    if interaction.component.custom_id not in ["info", "dev"]:
+        # We filter out any other button presses except
+        # the components we wish to process.
+        return
+
+    if interaction.component.custom_id == "info":
+        users = await db.info()
+        user_list = '\n'.join([f'{user[2]} - @{user[3]}' for user in users])
+        embed = disnake.Embed(title=f'[🌐] Пользователи которым вы можете отправить сообщение:\n',
+                              color=disnake.Colour.blurple())
+        embed.add_field(name='', value=user_list)
+        embed.add_field(name="Как отправить сообщение?",
+                        value="Ввести команду /stg -> выбрать кому отправить -> написать сообщение",
+                        inline=False)
+        embed.set_thumbnail(url="https://cdn2.iconfinder.com/data/icons/round-set-vol-2/120/sending-1024.png")
+        await interaction.send(embed=embed, ephemeral=True)
+    elif interaction.component.custom_id == "dev":
+        embed = disnake.Embed(title="[👨🏻‍💻] О боте:", color=0x185200)
+        embed.add_field(name="[🛠] Разработчик", value="@solarezzwhynot")
+        embed.add_field(name="[⚙️] Версия", value="0.6")
+        embed.add_field(name="[💳] Поддержка копеечкой для хостинга", value="2200 7007 1699 4750")
+        embed.set_thumbnail(url="https://i.pinimg.com/originals/f8/d0/bc/f8d0bc025046ab637a78a09598b905a7.png")
+        await interaction.send(embed=embed)
 
 @ds.slash_command(name="dev", description="Разработчик бота")
 async def dev(interaction: disnake.ApplicationCommandInteraction):
