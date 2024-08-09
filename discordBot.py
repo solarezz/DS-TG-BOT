@@ -59,20 +59,41 @@ async def start(message: types.Message):
 @dp.message_handler(commands=['sendall'])
 async def sendall(message: types.Message):
     if message.chat.id == 2023527964:
-        message_options = message.text
+        text_to_send = message.text[len('/sendall '):].strip()
         list = await db.all_user_id_tg()
         kb = [
             [
-                types.KeyboardButton(text="/notifications")
+                types.KeyboardButton(text="/notifications"),
+                types.KeyboardButton(text="/profile")
             ]
         ]
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, keyboard=kb)
-        for user in list:
-            await tg.send_message(user, f'{message_options[0]}', reply_markup=markup)
+        for user in list1:
+            await tg.send_message(user, f'{text_to_send}', reply_markup=markup)
 
         await tg.send_message(message.chat.id, f'отправили всем [{list}]')
     else:
         pass
+
+@dp.message_handler(commands=['profile'])
+async def profile(message: types.Message):
+    try:
+        counter_tg = await db.info_counter_tg(user_id_telegram=message.chat.id)
+        counter_ds = await db.full_info_user(user_id_tg=message.chat.id)
+        await tg.send_message(message.chat.id, f"""
+        [👤] Ваш профиль:
+        ┣[🩵] Количество сообщений из тг: {counter_tg}
+        ┣[💙] Количество сообщений из дс: {counter_ds[8]}
+        ┗[🩵💙] Общее кол-во сообщений: {counter_ds[9]}""")
+    except:
+        kb = [
+            [
+                types.KeyboardButton(text="👔 Привязать дискорд")
+            ]
+        ]
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, keyboard=kb)
+        await tg.send_message(message.chat.id, "[❌] Вы не привязали Discord ID к Telegram боту!",
+                              reply_markup=markup)
 
 @dp.message_handler(commands=['notifications'])
 async def notifications(message: types.Message):
@@ -125,9 +146,13 @@ async def process_discord_id(message: types.Message, state: FSMContext):
 async def message_in_discord(message: types.Message):
     cooldown = 15
     info_cd = await db.info_cooldown_tg(user_id_tg=message.chat.id)
+    counter_tg = int(await db.info_counter_tg(user_id_telegram=message.chat.id))
     if info_cd == 0:
         user_text = message.text
+        counter = len(user_text.split())
+        counter += counter_tg
         await on_ready(name=message.from_user.first_name, message=user_text)
+        await db.update_counter_tg(counter_telegram=counter, user_id_telegram=message.chat.id)
         await db.update_cooldown_tg(cooldown_tg=cooldown, user_id_tg=message.chat.id)
         asyncio.create_task(handle_cooldown_tg(message.chat.id, cooldown))
     else:
@@ -186,14 +211,18 @@ async def stg(interaction: disnake.ApplicationCommandInteraction, name: str, mes
     try:
         cooldown = 15
         info_cd = await db.info_cooldown_ds(user_id_ds=interaction.author.id)
+        counter = int(await db.info_counter_ds(user_id_discord=interaction.author.id))
         if info_cd == 0:
             users = await db.info()
             user_list = [f'{user[2]}' for user in users]
             if name in user_list:
                 user = interaction.user
                 user_id = await db.info_id(name)
+                counter_ds = len(message.split())
+                counter += counter_ds
                 await interaction.send(f"[📨] Вы отправили сообщение пользователю - {name}!")
                 await tg.send_message(user_id, f'[{message}] - от {user.name}')
+                await db.update_counter_ds(counter_discord=counter, user_id_discord=interaction.author.id)
                 await db.update_cooldown_ds(cooldown=cooldown, user_id_ds=interaction.author.id)
                 asyncio.create_task(handle_cooldown(interaction.author.id, cooldown))
             else:

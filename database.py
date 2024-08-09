@@ -22,7 +22,8 @@ class Database:
 
     async def full_info_user(self, user_id_tg):
         async with aiosqlite.connect(self.db_name) as db:
-            async with db.execute('SELECT * FROM users WHERE user_id_telegram = ?', (user_id_tg,)) as cursor:
+            async with db.execute('SELECT * FROM users WHERE user_id_telegram = ?',
+                                  (user_id_tg,)) as cursor:
                 info = await cursor.fetchone()
                 return info
 
@@ -35,7 +36,8 @@ class Database:
 
     async def info_cooldown_tg(self, user_id_tg):
         async with aiosqlite.connect(self.db_name) as db:
-            async with db.execute('SELECT cooldown_telegram FROM users WHERE user_id_telegram = ?', (user_id_tg,)) as cursor:
+            async with db.execute('SELECT cooldown_telegram FROM users WHERE user_id_telegram = ?',
+                                  (user_id_tg,)) as cursor:
                 info_cooldown = await cursor.fetchone()
                 return info_cooldown[0]
 
@@ -60,7 +62,8 @@ class Database:
 
     async def info_id(self, name):
         async with aiosqlite.connect(self.db_name) as db:
-            async with db.execute('SELECT user_id_telegram FROM users WHERE firstname = ?', (name,)) as cursor:
+            async with db.execute('SELECT user_id_telegram FROM users WHERE firstname = ?',
+                                  (name,)) as cursor:
                 info_id = await cursor.fetchone()
                 return info_id[0]
 
@@ -68,7 +71,7 @@ class Database:
         async with aiosqlite.connect(self.db_name) as db:
             await db.execute('UPDATE users SET notifications = ? WHERE user_id_telegram = ?',
                              (notifications,
-                             user_id_tg))
+                              user_id_tg))
             await db.commit()
 
     async def info_id_not(self):
@@ -82,3 +85,31 @@ class Database:
             async with db.execute('SELECT user_id_telegram FROM users') as cursor:
                 result = await cursor.fetchall()
                 return [row[0] for row in result]
+
+    async def update_counter_tg(self, counter_telegram, user_id_telegram):
+        async with aiosqlite.connect(self.db_name) as db:
+            await db.execute('UPDATE users SET counter_telegram = ? WHERE user_id_telegram = ?',
+                             (counter_telegram,
+                              user_id_telegram))
+            await db.commit()
+
+    async def update_counter_ds(self, counter_discord, user_id_discord):
+        async with aiosqlite.connect(self.db_name) as db:
+            await db.execute('UPDATE users SET counter_discord = ? WHERE user_id_discord = ?',
+                             (counter_discord,
+                              user_id_discord))
+            await db.commit()
+
+    async def info_counter_tg(self, user_id_telegram):
+        async with aiosqlite.connect(self.db_name) as db:
+            async with db.execute('SELECT counter_telegram FROM users WHERE user_id_telegram = ?',
+                                  (user_id_telegram,)) as cursor:
+                counter_tg = await cursor.fetchone()
+                return counter_tg[0]
+
+    async def info_counter_ds(self, user_id_discord):
+        async with aiosqlite.connect(self.db_name) as db:
+            async with db.execute('SELECT counter_discord FROM users WHERE user_id_discord = ?',
+                                  (user_id_discord,)) as cursor:
+                counter_ds = await cursor.fetchone()
+                return counter_ds[0]
