@@ -131,7 +131,8 @@ async def process_discord_id(message: types.Message, state: FSMContext):
         types.ReplyKeyboardRemove()
         kb = [
             [
-                types.KeyboardButton(text="/notifications")
+                types.KeyboardButton(text="/notifications"),
+                types.KeyboardButton(text="/profile")
             ]
         ]
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, keyboard=kb)
