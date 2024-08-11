@@ -137,10 +137,10 @@ async def process_discord_id(message: types.Message, state: FSMContext):
         ]
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, keyboard=kb)
         await message.reply(
-            f"Ваш Discord ID {discord_id} успешно привязан!\nЕсли вдруг вы случайно ввели не тот ID, напишите команду /discord", reply_markup=markup)
+            f"[🟢] Ваш Discord ID {discord_id} успешно привязан!\nЕсли вдруг вы случайно ввели не тот ID, напишите команду /discord", reply_markup=markup)
         await state.finish()
     except ValueError:
-        await message.reply("Пожалуйста, введите корректный Discord ID (число).")
+        await message.reply("[🟡] Пожалуйста, введите корректный Discord ID (число).")
 
 
 @dp.message_handler()

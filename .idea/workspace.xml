@@ -10,6 +10,7 @@
       <change afterPath="$PROJECT_DIR$/../course/store-server/store/.idea/modules.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../course/store-server/store/.idea/store.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../course/store-server/store/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/discordBot.py" beforeDir="false" afterPath="$PROJECT_DIR$/discordBot.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -142,6 +143,7 @@
       <workItem from="1723196702719" duration="6865000" />
       <workItem from="1723207752913" duration="225000" />
       <workItem from="1723296103875" duration="45000" />
+      <workItem from="1723365205954" duration="275000" />
     </task>
     <servers />
   </component>
