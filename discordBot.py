@@ -9,9 +9,9 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 
 
-ds_token = ''
+ds_token = input('Please, input your Discord Token: ')
 
-tg_token = ''
+tg_token = input('Please, input your Telegram Token: ')
 
 intents = disnake.Intents.default().all()
 
@@ -277,8 +277,6 @@ async def profile(interaction: disnake.ApplicationCommandInteraction):
 @ds.listen("on_button_click")
 async def help_listener(interaction: disnake.MessageInteraction):
     if interaction.component.custom_id not in ["info", "dev"]:
-        # We filter out any other button presses except
-        # the components we wish to process.
         return
 
     if interaction.component.custom_id == "info":
@@ -295,7 +293,7 @@ async def help_listener(interaction: disnake.MessageInteraction):
     elif interaction.component.custom_id == "dev":
         embed = disnake.Embed(title="[👨🏻‍💻] О боте:", color=0x185200)
         embed.add_field(name="[🛠] Разработчик", value="@solarezzwhynot")
-        embed.add_field(name="[⚙️] Версия", value="0.6")
+        embed.add_field(name="[⚙️] Версия", value="0.7")
         embed.add_field(name="[💳] Поддержка копеечкой для хостинга", value="2200 7007 1699 4750")
         embed.set_thumbnail(url="https://i.pinimg.com/originals/f8/d0/bc/f8d0bc025046ab637a78a09598b905a7.png")
         await interaction.send(embed=embed)
